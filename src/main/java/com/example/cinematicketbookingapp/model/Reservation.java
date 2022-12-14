@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Entity
@@ -23,11 +24,12 @@ public class Reservation {
     @JoinColumn(name = "screening_id")
     private Screening screening;
 
+    @ManyToMany
+    private Set<Seat> seats;
+
     private String ownerName;
 
     private String ownerSurname;
 
-    @ManyToMany
-    private Set<Seat> seats;
-
+    private LocalDateTime creationDateTime;
 }

@@ -19,10 +19,6 @@ public class Seat {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int rowNumber;
-
-    private int seatNumber;
-
     @ManyToOne
     @JoinColumn(name="screening_room_id")
     private ScreeningRoom screeningRoom;
@@ -34,4 +30,8 @@ public class Seat {
             inverseJoinColumns = @JoinColumn(name="reservation_id", referencedColumnName = "id")
     )
     private Set<Reservation> reservations;
+
+    private int rowNumber;
+
+    private int seatNumber;
 }

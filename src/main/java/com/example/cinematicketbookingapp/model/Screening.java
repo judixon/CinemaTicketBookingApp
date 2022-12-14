@@ -23,14 +23,14 @@ public class Screening {
     @ManyToOne
     private Movie movie;
 
-    private LocalDateTime startDateTime;
-
-    private LocalDateTime endDateTime;
-
     @ManyToOne
     @JoinColumn(name = "screening_room_id")
     private ScreeningRoom screeningRoom;
 
     @OneToMany(mappedBy = "screening")
     private Set<Reservation> reservations;
+
+    private LocalDateTime startDateTime;
+
+    private LocalDateTime endDateTime;
 }

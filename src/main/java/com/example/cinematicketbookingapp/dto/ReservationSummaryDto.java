@@ -1,4 +1,7 @@
 package com.example.cinematicketbookingapp.dto;
 
-public record ReservationSummaryDto() {
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+
+public record ReservationSummaryDto(Long reservationId, BigDecimal totalPrice, LocalDateTime expirationTime) {
 }
