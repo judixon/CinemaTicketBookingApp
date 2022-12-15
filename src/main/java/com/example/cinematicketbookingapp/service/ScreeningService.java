@@ -6,12 +6,14 @@ import com.example.cinematicketbookingapp.dto.SeatsAvailabilitySchemaDto;
 import com.example.cinematicketbookingapp.exceptions.DefaultExceptionMessages;
 import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
 import com.example.cinematicketbookingapp.mapper.ScreeningDtoMapper;
+import com.example.cinematicketbookingapp.model.Screening;
 import com.example.cinematicketbookingapp.repository.ScreeningRepository;
 import com.example.cinematicketbookingapp.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,21 +21,19 @@ import java.util.List;
 public class ScreeningService {
 
     private final ScreeningRepository screeningRepository;
-    private final SeatRepository seatRepository;
     private final ScreeningDtoMapper screeningDtoMapper;
 
     public List<ScreeningListDto> getScreenings(String firstSortingParam, String secondSortingParam,
-                                                Sort.Direction firstParamDirection, Sort.Direction secondParamDirection) {
-        return screeningRepository.findAll(Sort.by(firstParamDirection,firstSortingParam)
-                        .and(Sort.by(secondParamDirection,secondSortingParam)))
+                                                Sort.Direction firstParamDirection, Sort.Direction secondParamDirection,
+                                                LocalDateTime fromDateTime, LocalDateTime toDateTime) {
+
+        return screeningRepository.findAllByStartDateTimeAfterAndStartDateTimeBefore(
+                Sort.by(firstParamDirection,firstSortingParam)
+                        .and(Sort.by(secondParamDirection,secondSortingParam)),
+                fromDateTime,toDateTime)
                 .stream()
                 .map(screeningDtoMapper::mapToScreeningListDto)
                 .toList();
-//        return screeningRepository.findAll(Sort.by(Sort.Direction.valueOf(firstParamDirection),firstSortingParam)
-//                        .and(Sort.by(Sort.Direction.valueOf((secondParamDirection),secondSortingParam))))
-//                .stream()
-//                .map(screeningDtoMapper::mapToScreeningListDto)
-//                .toList();
     }
 
     public ScreeningDetailsDto getScreening(Long screeningId){
