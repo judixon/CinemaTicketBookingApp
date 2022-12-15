@@ -350,6 +350,16 @@ values (2, 1,'2022-01-28 12:00:00','2022-01-28 14:00:00'),
        (1, 3,'2022-01-30 18:00:00','2022-01-30 20:10:00'),
        (2, 3,'2022-01-30 21:00:00','2022-01-30 22:40:00');
 
+INSERT INTO reservation (owner_name,screening_id)
+values ('sdf', 1),
+       ('qwer',1),
+       ('olkop',1);
+
+INSERT INTO seat_reservation (reservation_id,seat_id)
+values (1, 1),
+       (1,2),
+       (1,3);
+
 
 
 
