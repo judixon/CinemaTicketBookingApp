@@ -18,7 +18,6 @@ class SeatRepositoryTest {
     private SeatRepository seatRepository;
 
     @Nested
-    @DataJpaTest
     class findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending {
 
         @Test

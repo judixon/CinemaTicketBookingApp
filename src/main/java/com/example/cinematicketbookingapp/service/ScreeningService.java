@@ -55,16 +55,21 @@ public class ScreeningService {
         List<Seat> seats = seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(screeningId);
         StringBuilder rowPattern = new StringBuilder();
         List<String> result = new ArrayList<>();
-        int tempRowNumber = 1;
+        int tempRowNumber =1;
         for (Seat seat : seats) {
             if (tempRowNumber != seat.getRowNumber()) {
                 result.add(rowPattern.toString());
                 rowPattern = new StringBuilder();
                 tempRowNumber = seat.getRowNumber();
             }
+            if (rowPattern.toString().isEmpty()){
+                rowPattern.append(String.format("%-9s",String.format("ROW(%s):",seat.getRowNumber())));
+            }
             rowPattern.append(getSeatSignature(seat, screeningId));
         }
-        result.add(rowPattern.toString());
+        if (!rowPattern.toString().isEmpty()){
+            result.add(rowPattern.toString());
+        }
         return result;
     }
 
