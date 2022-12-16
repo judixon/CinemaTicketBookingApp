@@ -6,7 +6,9 @@ import com.example.cinematicketbookingapp.dto.SeatListDto;
 import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
 import com.example.cinematicketbookingapp.mapper.ScreeningDtoMapper;
 import com.example.cinematicketbookingapp.mapper.SeatDtoMapper;
-import com.example.cinematicketbookingapp.model.*;
+import com.example.cinematicketbookingapp.model.Reservation;
+import com.example.cinematicketbookingapp.model.Screening;
+import com.example.cinematicketbookingapp.model.Seat;
 import com.example.cinematicketbookingapp.repository.ScreeningRepository;
 import com.example.cinematicketbookingapp.repository.SeatRepository;
 import org.junit.jupiter.api.Nested;
@@ -18,14 +20,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -52,20 +55,20 @@ class ScreeningServiceTest {
 
         //when
         when(screeningRepository.findAllByStartDateTimeAfterAndStartDateTimeBefore(any(), any(), any()))
-                .thenReturn(List.of(new Screening(),new Screening(), new Screening()));
+                .thenReturn(List.of(new Screening(), new Screening(), new Screening()));
         when(screeningDtoMapper.mapToScreeningListDto(any(Screening.class))).thenReturn(ScreeningListDto.builder().build());
-        List<ScreeningListDto> result = screeningService.getScreenings("a","b", Sort.Direction.ASC, Sort.Direction.ASC,
-                LocalDateTime.now(),LocalDateTime.now());
+        List<ScreeningListDto> result = screeningService.getScreenings("a", "b", Sort.Direction.ASC, Sort.Direction.ASC,
+                LocalDateTime.now(), LocalDateTime.now());
 
         //then
         assertThat(result).hasSize(3);
     }
 
     @Nested
-    class getScreening{
+    class getScreening {
 
         @Test
-        void returnsScreeningDetailsDtoWithEmptySeatList_whenAllSeatsAreReserved(){
+        void returnsScreeningDetailsDtoWithEmptySeatList_whenAllSeatsAreReserved() {
             //given
             Screening screening = Screening.builder()
                     .id(1L)
@@ -79,7 +82,7 @@ class ScreeningServiceTest {
             Seat seat2 = Seat.builder()
                     .reservations(Set.of(reservation))
                     .build();
-            List<Seat> seatRepositoryMethodResult =  List.of(seat1,seat2);
+            List<Seat> seatRepositoryMethodResult = List.of(seat1, seat2);
 
             //when
             when(screeningRepository.findById(anyLong())).thenReturn(Optional.of(new Screening()));
@@ -87,25 +90,25 @@ class ScreeningServiceTest {
                     .thenReturn(seatRepositoryMethodResult);
             when(screeningDtoMapper.mapToScreeningDetailsDto(any(Screening.class)))
                     .thenReturn(ScreeningDetailsDto.builder().build());
-             ScreeningDetailsDto result = screeningService.getScreening(1L);
+            ScreeningDetailsDto result = screeningService.getScreening(1L);
 
             //then
             assertThat(result.availableSeats()).isEmpty();
         }
 
         @Test
-        void throwsResourceNotFoundException_whenScreeningIsNotFound(){
+        void throwsResourceNotFoundException_whenScreeningIsNotFound() {
             //given
 
             //when
             when(screeningRepository.findById(anyLong())).thenReturn(Optional.empty());
 
             //then
-            assertThrows(ResourceNotFoundException.class,() -> screeningService.getScreening(1L));
+            assertThrows(ResourceNotFoundException.class, () -> screeningService.getScreening(1L));
         }
 
         @Test
-        void returnsScreeningDetailsDtoWithFilledUpFreeSeatsList_whenSomeSeatsAreFree(){
+        void returnsScreeningDetailsDtoWithFilledUpFreeSeatsList_whenSomeSeatsAreFree() {
             //given
             Screening screening1 = Screening.builder()
                     .id(1L)
@@ -128,7 +131,7 @@ class ScreeningServiceTest {
             Seat seat3 = Seat.builder()
                     .reservations(Set.of())
                     .build();
-            List<Seat> seatRepositoryMethodResult =  List.of(seat1,seat2,seat3);
+            List<Seat> seatRepositoryMethodResult = List.of(seat1, seat2, seat3);
 
             //when
             when(screeningRepository.findById(anyLong())).thenReturn(Optional.of(new Screening()));
@@ -144,7 +147,7 @@ class ScreeningServiceTest {
         }
 
         @Test
-        void returnsEmptyStringListRepresentingScreeningRoomSeatSchema_whenScreeningRoomDoesNotHaveAnySeats(){
+        void returnsEmptyStringListRepresentingScreeningRoomSeatSchema_whenScreeningRoomDoesNotHaveAnySeats() {
             //given
 
             //when
@@ -160,7 +163,7 @@ class ScreeningServiceTest {
         }
 
         @Test
-        void returnsCorrectStringListRepresentingScreeningRoomSeatSchema_whenScreeningRoomHasAnySeats(){
+        void returnsCorrectStringListRepresentingScreeningRoomSeatSchema_whenScreeningRoomHasAnySeats() {
             //given
             Screening screening1 = Screening.builder()
                     .id(1L)
@@ -188,7 +191,7 @@ class ScreeningServiceTest {
                     .seatNumber(999)
                     .reservations(Set.of(reservation1))
                     .build();
-            List<Seat> seatRepositoryMethodResult =  List.of(seat1,seat2,seat3,seat4);
+            List<Seat> seatRepositoryMethodResult = List.of(seat1, seat2, seat3, seat4);
             String firstRowExpectation = "ROW(1):  [1]  [12] ";
             String secondRowExpectation = "ROW(2):  [7]  ";
             String thirdRowExpectation = "ROW(5):  (X)  ";
@@ -202,9 +205,11 @@ class ScreeningServiceTest {
             List<String> result = screeningService.getScreening(1L).seatsAvailabilitySchema();
 
             //then
-            assertThat(result.get(0)).isEqualTo(firstRowExpectation);
-            assertThat(result.get(1)).isEqualTo(secondRowExpectation);
-            assertThat(result.get(2)).isEqualTo(thirdRowExpectation);
+            assertAll(
+                    () -> assertThat(result.get(0)).isEqualTo(firstRowExpectation),
+                    () ->  assertThat(result.get(1)).isEqualTo(secondRowExpectation),
+                    () -> assertThat(result.get(2)).isEqualTo(thirdRowExpectation)
+            );
         }
     }
 }
