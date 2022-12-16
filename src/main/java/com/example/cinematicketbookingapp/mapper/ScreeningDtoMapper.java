@@ -19,9 +19,8 @@ public class ScreeningDtoMapper {
         return ScreeningDetailsDto.builder()
                 .screeningId(screening.getId())
                 .movieTitle(screening.getMovie().getTitle())
-                .screeningEndDateTime(screening.getStartDateTime())
+                .screeningStartDateTime(screening.getStartDateTime())
                 .screeningEndDateTime(screening.getEndDateTime())
-//                .seatsAvailabilitySchemaDto()
                 .build();
     }
 }
