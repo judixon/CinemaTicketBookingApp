@@ -1,11 +1,16 @@
 package com.example.cinematicketbookingapp.model;
 
+import com.example.cinematicketbookingapp.validation.Name;
+import com.example.cinematicketbookingapp.validation.OnePartSurname;
+import com.example.cinematicketbookingapp.validation.TwoPartSurname;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -25,10 +30,16 @@ public class Reservation {
     private Screening screening;
 
     @ManyToMany
+    @NotEmpty
     private Set<Seat> seats;
 
+    @NotNull
+    @Name(message = "Name should be at least 3 characters long and start with capital letter")
     private String ownerName;
 
+    @NotNull
+    @OnePartSurname(message = "Surname should be at least 3 characters long and start with capital letter")
+    @TwoPartSurname(message = "Both parts of surname should be at least 3 characters long and start with capital letter")
     private String ownerSurname;
 
     private LocalDateTime creationDateTime;
