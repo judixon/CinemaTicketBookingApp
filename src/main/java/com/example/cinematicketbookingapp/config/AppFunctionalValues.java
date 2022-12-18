@@ -10,6 +10,4 @@ public abstract class AppFunctionalValues {
     public static final BigDecimal STUDENT_TICKET_PRICE = BigDecimal.valueOf(18);
     public static final BigDecimal CHILD_TICKET_PRICE = BigDecimal.valueOf(12.50);
     public static final LocalTime BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME = LocalTime.of(0, 15);
-
-
 }

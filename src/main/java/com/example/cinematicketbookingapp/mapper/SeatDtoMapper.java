@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class SeatDtoMapper {
 
-   public SeatListDto mapToSeatListDto(Seat seat){
+    public SeatListDto mapToSeatListDto(Seat seat) {
         return SeatListDto.builder()
                 .seatId(seat.getId())
                 .seatNumber(seat.getSeatNumber())

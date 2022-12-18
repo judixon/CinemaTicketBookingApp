@@ -25,12 +25,9 @@ public class SwaggerConfig implements WebMvcConfigurer {
     }
 
     private ApiInfo apiInfoMetaData() {
-
         return new ApiInfoBuilder().title("CinemaTicketBookingApp REST API")
-                .description("API Endpoint Decoration")
-                .contact(new Contact("Tomasz Wazny","https://github.com/judixon","tomaszwazny97@gmail.com"))
+                .contact(new Contact("Tomasz Wazny", "https://github.com/judixon", "tomaszwazny97@gmail.com"))
                 .version("1.0.0")
                 .build();
     }
-
 }

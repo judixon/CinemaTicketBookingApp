@@ -21,7 +21,7 @@ public class Seat {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name="screening_room_id")
+    @JoinColumn(name = "screening_room_id")
     private ScreeningRoom screeningRoom;
 
     @ManyToMany(mappedBy = "seats")

@@ -21,10 +21,10 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    ResponseEntity<ReservationSummaryDto> createReservation(@RequestBody ReservationCreationDataDto reservationCreationDataDto){
-       ReservationSummaryDto reservationSummaryDto = reservationService.createReservation(reservationCreationDataDto);
+    ResponseEntity<ReservationSummaryDto> createReservation(@RequestBody ReservationCreationDataDto reservationCreationDataDto) {
+        ReservationSummaryDto reservationSummaryDto = reservationService.createReservation(reservationCreationDataDto);
         URI savedReservationUri = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/reservation-id")
+                .path("/{reservation-id}")
                 .buildAndExpand(reservationSummaryDto.reservationId())
                 .toUri();
         return ResponseEntity.created(savedReservationUri).body(reservationSummaryDto);

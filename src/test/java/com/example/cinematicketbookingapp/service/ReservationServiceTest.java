@@ -42,4 +42,40 @@ class ReservationServiceTest {
         //then
 //        assertThrows(ReservationSystemClosedException.class,() -> )
     }
+
+    void createReservation_shouldThrowReservedSeatsNumberUnequalToTicketsNumberException_whenNumberOfTicketsInUnequalToNumberOfChoseSeats(){
+        //given
+
+        //when
+
+
+        //then
+//        assertThrows(ReservationSystemClosedException.class,() -> )
+    }
+
+    void createReservation_shouldThrowSeatAlreadyReservedException_whenAtLeastOneOfChosenSeatsIsAlreadyReserved(){
+        //given
+
+        //when
+
+
+        //then
+//        assertThrows(ReservationSystemClosedException.class,() -> )
+    }
+
+    void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftAtTheBeginningOfTheRow(){
+
+    }
+
+    void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftAtTheEndOfTheRow(){
+
+    }
+
+    void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftBetweenTwoPotentiallyReserved(){
+
+    }
+
+    void createReservation_shouldCorrectlyCountTotalPriceForTickets_whenChosenTicketsNumberIsEqualToNumberOfChosenSeats(){
+
+    }
 }

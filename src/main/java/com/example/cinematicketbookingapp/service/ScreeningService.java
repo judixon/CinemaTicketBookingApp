@@ -3,7 +3,6 @@ package com.example.cinematicketbookingapp.service;
 import com.example.cinematicketbookingapp.dto.ScreeningDetailsDto;
 import com.example.cinematicketbookingapp.dto.ScreeningListDto;
 import com.example.cinematicketbookingapp.dto.SeatListDto;
-import com.example.cinematicketbookingapp.exceptions.DefaultExceptionMessages;
 import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
 import com.example.cinematicketbookingapp.mapper.ScreeningDtoMapper;
 import com.example.cinematicketbookingapp.mapper.SeatDtoMapper;
@@ -43,7 +42,7 @@ public class ScreeningService {
     public ScreeningDetailsDto getScreening(Long screeningId) {
         return screeningRepository.findById(screeningId)
                 .map(screeningDtoMapper::mapToScreeningDetailsDto)
-                .orElseThrow(() -> new ResourceNotFoundException("Screening",screeningId))
+                .orElseThrow(() -> new ResourceNotFoundException("Screening", screeningId))
                 .toBuilder()
                 .seatsAvailabilitySchema(createSeatsAvailabilitySchema(screeningId))
                 .availableSeats(getListOfFreeSeats(screeningId))
@@ -54,19 +53,19 @@ public class ScreeningService {
         List<Seat> seats = seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(screeningId);
         StringBuilder rowPattern = new StringBuilder();
         List<String> result = new ArrayList<>();
-        int tempRowNumber =1;
+        int tempRowNumber = 1;
         for (Seat seat : seats) {
             if (tempRowNumber != seat.getRowNumber()) {
                 result.add(rowPattern.toString());
                 rowPattern = new StringBuilder();
                 tempRowNumber = seat.getRowNumber();
             }
-            if (rowPattern.toString().isEmpty()){
-                rowPattern.append(String.format("%-9s",String.format("ROW(%s):",seat.getRowNumber())));
+            if (rowPattern.toString().isEmpty()) {
+                rowPattern.append(String.format("%-9s", String.format("ROW(%s):", seat.getRowNumber())));
             }
             rowPattern.append(getSeatSignature(seat, screeningId));
         }
-        if (!rowPattern.toString().isEmpty()){
+        if (!rowPattern.toString().isEmpty()) {
             result.add(rowPattern.toString());
         }
         return result;

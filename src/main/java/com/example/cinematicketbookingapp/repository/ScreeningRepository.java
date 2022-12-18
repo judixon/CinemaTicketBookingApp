@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface ScreeningRepository extends JpaRepository<Screening,Long> {
+public interface ScreeningRepository extends JpaRepository<Screening, Long> {
 
     List<Screening> findAllByStartDateTimeAfterAndStartDateTimeBefore(Sort sort, LocalDateTime fromDateTome, LocalDateTime toDateTime);
 }

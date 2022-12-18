@@ -6,7 +6,7 @@ public abstract class DefaultExceptionMessages {
     public static final String RESERVATION_SYSTEM_CLOSED_EXCEPTION_MESSAGE = "Creating reservation impossible, reservation system" +
             "closes %s %s before screening";
 
-    public static final String RESERVED_SEATS_NUMBER_UNEQUAL_TO_TICKETS_NUMBER_EXCEPTION_MESSAGE ="Number of reserved seats " +
+    public static final String RESERVED_SEATS_NUMBER_UNEQUAL_TO_TICKETS_NUMBER_EXCEPTION_MESSAGE = "Number of reserved seats " +
             "(%s) is not equal to number of chosen tickets (%s).";
 
     public static final String SEAT_ALREADY_RESERVED_EXCEPTION = "Seat with number: %s (ID: %s) is already reserved";

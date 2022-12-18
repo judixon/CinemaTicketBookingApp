@@ -3,7 +3,6 @@ package com.example.cinematicketbookingapp.mapper;
 import com.example.cinematicketbookingapp.config.AppFunctionalValues;
 import com.example.cinematicketbookingapp.dto.ReservationCreationDataDto;
 import com.example.cinematicketbookingapp.dto.ReservationSummaryDto;
-import com.example.cinematicketbookingapp.exceptions.DefaultExceptionMessages;
 import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
 import com.example.cinematicketbookingapp.model.Reservation;
 import com.example.cinematicketbookingapp.model.Screening;
@@ -24,7 +23,7 @@ public class ReservationDtoMapper {
     private final ScreeningRepository screeningRepository;
     private final SeatRepository seatRepository;
 
-   public Reservation mapToReservation(ReservationCreationDataDto reservationCreationDataDto) {
+    public Reservation mapToReservation(ReservationCreationDataDto reservationCreationDataDto) {
         return Reservation.builder()
                 .screening(getScreeningById(reservationCreationDataDto.screeningId()))
                 .ownerName(reservationCreationDataDto.ownerName())
@@ -34,7 +33,7 @@ public class ReservationDtoMapper {
                 .build();
     }
 
-   public ReservationSummaryDto mapToReservationSummaryDto(Reservation reservation) {
+    public ReservationSummaryDto mapToReservationSummaryDto(Reservation reservation) {
         return ReservationSummaryDto.builder()
                 .reservationId(reservation.getId())
                 .expirationTime(reservation.getCreationDateTime().plus(AppFunctionalValues.RESERVATION_EXPIRATION_TIME))
@@ -43,13 +42,13 @@ public class ReservationDtoMapper {
 
     private Screening getScreeningById(Long id) {
         return screeningRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Screening",id));
+                .orElseThrow(() -> new ResourceNotFoundException("Screening", id));
     }
 
     private Set<Seat> getSeatsById(Set<Long> seatIds) {
         return seatIds.stream()
                 .map(seatId -> seatRepository.findById(seatId)
-                        .orElseThrow(() -> new ResourceNotFoundException("Seat",seatId)))
+                        .orElseThrow(() -> new ResourceNotFoundException("Seat", seatId)))
                 .collect(Collectors.toSet());
     }
 }

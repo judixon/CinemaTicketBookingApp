@@ -93,9 +93,7 @@ public class ReservationService {
                         checkIfTheSeatAtTheEndOfTheRowIsLeftFreeAsSingle(chosenSeats, screeningId,
                                 rowOfSeatsSortedBySeatNumber, i, i - 1);
                     } else {
-                        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i), chosenSeats)) {
-                            checkIfTheSeatBetweenTwoOthersIsLeftFreeAsSingle(chosenSeats, screeningId, rowOfSeatsSortedBySeatNumber, i);
-                        }
+                        checkIfTheSeatBetweenTwoOthersIsLeftFreeAsSingle(chosenSeats, screeningId, rowOfSeatsSortedBySeatNumber, i);
                     }
                 }
             }
@@ -104,11 +102,14 @@ public class ReservationService {
 
     private void checkIfTheSeatBetweenTwoOthersIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
                                                                   List<Seat> rowOfSeatsSortedBySeatNumber, int i) {
-        if (checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i - 1), chosenSeats) &&
-                checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i + 1), chosenSeats)) {
-            throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(i).getId(),
-                    rowOfSeatsSortedBySeatNumber.get(i).getSeatNumber());
+        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i), chosenSeats)) {
+            if (checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i - 1), chosenSeats) &&
+                    checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i + 1), chosenSeats)) {
+                throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(i).getId(),
+                        rowOfSeatsSortedBySeatNumber.get(i).getSeatNumber());
+            }
         }
+
     }
 
     private void checkIfTheSeatAtTheEndOfTheRowIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
