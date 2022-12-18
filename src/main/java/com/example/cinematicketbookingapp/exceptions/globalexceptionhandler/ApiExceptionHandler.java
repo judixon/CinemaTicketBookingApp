@@ -1,6 +1,6 @@
 package com.example.cinematicketbookingapp.exceptions.globalexceptionhandler;
 
-import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
+import com.example.cinematicketbookingapp.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -19,12 +19,24 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {ResourceNotFoundException.class})
     public ResponseEntity<Object> handleElementNotFoundException(ResourceNotFoundException e) {
         e.printStackTrace();
-        ApiException apiException = new ApiException(
+        ApiExceptionData apiExceptionData = new ApiExceptionData(
                 e.getMessage(),
                 HttpStatus.NOT_FOUND,
                 ZonedDateTime.now()
         );
-        return new ResponseEntity<>(apiException, apiException.responseHttpStatus());
+        return new ResponseEntity<>(apiExceptionData, apiExceptionData.responseHttpStatus());
+    }
+
+    @ExceptionHandler(value = {ReservationSystemClosedException.class, ReservedSeatsAmountUnequalToTicketsAmountException.class,
+            SeatAlreadyReservedException.class, SingleUnreservedSeatLeftException.class})
+    public ResponseEntity<Object> handleExceptionConnectedWithCreatingReservationProcess(ResourceNotFoundException e) {
+        e.printStackTrace();
+        ApiExceptionData apiExceptionData = new ApiExceptionData(
+                e.getMessage(),
+                HttpStatus.BAD_REQUEST,
+                ZonedDateTime.now()
+        );
+        return new ResponseEntity<>(apiExceptionData, apiExceptionData.responseHttpStatus());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

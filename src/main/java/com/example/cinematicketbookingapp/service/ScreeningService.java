@@ -43,8 +43,7 @@ public class ScreeningService {
     public ScreeningDetailsDto getScreening(Long screeningId) {
         return screeningRepository.findById(screeningId)
                 .map(screeningDtoMapper::mapToScreeningDetailsDto)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        String.format(DefaultExceptionMessages.SCREENING_NOT_FOUND_EXCEPTION_MESSAGE, screeningId)))
+                .orElseThrow(() -> new ResourceNotFoundException("Screening",screeningId))
                 .toBuilder()
                 .seatsAvailabilitySchema(createSeatsAvailabilitySchema(screeningId))
                 .availableSeats(getListOfFreeSeats(screeningId))

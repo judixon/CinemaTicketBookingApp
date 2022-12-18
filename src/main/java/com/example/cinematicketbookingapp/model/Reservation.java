@@ -30,6 +30,11 @@ public class Reservation {
     private Screening screening;
 
     @ManyToMany
+    @JoinTable(
+            name="seat_reservation",
+            joinColumns = @JoinColumn(name = "reservation_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name="seat_id", referencedColumnName = "id")
+    )
     @NotEmpty
     private Set<Seat> seats;
 

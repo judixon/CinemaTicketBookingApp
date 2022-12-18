@@ -5,9 +5,9 @@ import org.springframework.http.HttpStatus;
 
 import java.time.ZonedDateTime;
 
-public record ApiException(String message,
-                           HttpStatus responseHttpStatus, ZonedDateTime timestamp) {
+public record ApiExceptionData(String message,
+                               HttpStatus responseHttpStatus, ZonedDateTime timestamp) {
     @Builder(toBuilder = true)
-    public ApiException {
+    public ApiExceptionData {
     }
 }

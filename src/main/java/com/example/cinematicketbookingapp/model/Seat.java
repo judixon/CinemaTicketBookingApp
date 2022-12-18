@@ -24,12 +24,7 @@ public class Seat {
     @JoinColumn(name="screening_room_id")
     private ScreeningRoom screeningRoom;
 
-    @ManyToMany
-    @JoinTable(
-            name="seat_reservation",
-            joinColumns = @JoinColumn(name = "seat_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name="reservation_id", referencedColumnName = "id")
-    )
+    @ManyToMany(mappedBy = "seats")
     private Set<Reservation> reservations;
 
     private int rowNumber;

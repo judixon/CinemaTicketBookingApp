@@ -43,15 +43,13 @@ public class ReservationDtoMapper {
 
     private Screening getScreeningById(Long id) {
         return screeningRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(String.format(
-                        DefaultExceptionMessages.SCREENING_NOT_FOUND_EXCEPTION_MESSAGE, id)));
+                .orElseThrow(() -> new ResourceNotFoundException("Screening",id));
     }
 
     private Set<Seat> getSeatsById(Set<Long> seatIds) {
         return seatIds.stream()
                 .map(seatId -> seatRepository.findById(seatId)
-                        .orElseThrow(() -> new ResourceNotFoundException(String.format(
-                                DefaultExceptionMessages.SEAT_NOT_FOUND_EXCEPTION_MESSAGE, seatId))))
+                        .orElseThrow(() -> new ResourceNotFoundException("Seat",seatId)))
                 .collect(Collectors.toSet());
     }
 }
