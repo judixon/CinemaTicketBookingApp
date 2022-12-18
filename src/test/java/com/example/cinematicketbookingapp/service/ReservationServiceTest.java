@@ -5,6 +5,7 @@ import com.example.cinematicketbookingapp.exceptions.ReservationSystemClosedExce
 import com.example.cinematicketbookingapp.mapper.ReservationDtoMapper;
 import com.example.cinematicketbookingapp.repository.ReservationRepository;
 import com.example.cinematicketbookingapp.repository.ScreeningRepository;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -32,7 +33,7 @@ class ReservationServiceTest {
     private ReservationService reservationService;
 
 
-
+    @Test
     void createReservation_shouldThrowReservationSystemClosedException_whenReservationTimeIsAfterBorderTime(){
         //given
 
@@ -43,6 +44,7 @@ class ReservationServiceTest {
 //        assertThrows(ReservationSystemClosedException.class,() -> )
     }
 
+    @Test
     void createReservation_shouldThrowReservedSeatsNumberUnequalToTicketsNumberException_whenNumberOfTicketsInUnequalToNumberOfChoseSeats(){
         //given
 
@@ -52,7 +54,7 @@ class ReservationServiceTest {
         //then
 //        assertThrows(ReservationSystemClosedException.class,() -> )
     }
-
+    @Test
     void createReservation_shouldThrowSeatAlreadyReservedException_whenAtLeastOneOfChosenSeatsIsAlreadyReserved(){
         //given
 
@@ -63,18 +65,22 @@ class ReservationServiceTest {
 //        assertThrows(ReservationSystemClosedException.class,() -> )
     }
 
+    @Test
     void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftAtTheBeginningOfTheRow(){
 
     }
 
+    @Test
     void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftAtTheEndOfTheRow(){
 
     }
 
+    @Test
     void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftBetweenTwoPotentiallyReserved(){
 
     }
 
+    @Test
     void createReservation_shouldCorrectlyCountTotalPriceForTickets_whenChosenTicketsNumberIsEqualToNumberOfChosenSeats(){
 
     }
