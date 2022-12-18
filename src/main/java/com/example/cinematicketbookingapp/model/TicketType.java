@@ -14,4 +14,8 @@ public enum TicketType {
     TicketType(BigDecimal price) {
         this.price = price;
     }
+
+    public BigDecimal getPrice() {
+        return price;
+    }
 }

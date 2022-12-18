@@ -27,7 +27,7 @@ public class ApiExceptionHandler {
         return new ResponseEntity<>(apiExceptionData, apiExceptionData.responseHttpStatus());
     }
 
-    @ExceptionHandler(value = {ReservationSystemClosedException.class, ReservedSeatsAmountUnequalToTicketsAmountException.class,
+    @ExceptionHandler(value = {ReservationSystemClosedException.class, ReservedSeatsNumberUnequalToTicketsNumberException.class,
             SeatAlreadyReservedException.class, SingleUnreservedSeatLeftException.class})
     public ResponseEntity<Object> handleExceptionConnectedWithCreatingReservationProcess(ResourceNotFoundException e) {
         e.printStackTrace();

@@ -4,12 +4,14 @@ import com.example.cinematicketbookingapp.config.AppFunctionalValues;
 import com.example.cinematicketbookingapp.dto.ReservationCreationDataDto;
 import com.example.cinematicketbookingapp.dto.ReservationSummaryDto;
 import com.example.cinematicketbookingapp.exceptions.ReservationSystemClosedException;
-import com.example.cinematicketbookingapp.exceptions.ReservedSeatsAmountUnequalToTicketsAmountException;
+import com.example.cinematicketbookingapp.exceptions.ReservedSeatsNumberUnequalToTicketsNumberException;
 import com.example.cinematicketbookingapp.exceptions.SeatAlreadyReservedException;
+import com.example.cinematicketbookingapp.exceptions.SingleUnreservedSeatLeftException;
 import com.example.cinematicketbookingapp.mapper.ReservationDtoMapper;
 import com.example.cinematicketbookingapp.model.Reservation;
 import com.example.cinematicketbookingapp.model.Screening;
 import com.example.cinematicketbookingapp.model.Seat;
+import com.example.cinematicketbookingapp.model.TicketType;
 import com.example.cinematicketbookingapp.repository.ReservationRepository;
 import com.example.cinematicketbookingapp.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,9 +39,7 @@ public class ReservationService {
         checkIfReservationDateTimeIsBeforeScreeningReservationSystemClosureDateTime(reservation.getScreening());
         checkIfReservedSeatsAmountIsEqualToTicketsAmount(reservationCreationDataDto);
         checkIfChosenSeatsAreNotAlreadyReserved(reservation.getSeats(), reservationCreationDataDto.screeningId());
-        checkIfUnreservedSingleSeatIsLeft(reservation.getSeats(),reservationCreationDataDto.screeningId());
-
-        //jedna transakcja na raz może działać żeby nie można było zrobić rezerwacji na to samo miejsce w tym samym czasie dwukrotnie
+        checkIfUnreservedSingleSeatIsLeft(reservation.getSeats(), reservationCreationDataDto.screeningId());
 
         return reservationDtoMapper.mapToReservationSummaryDto(reservationRepository.save(reservation)).toBuilder()
                 .totalPrice(countTotalPrize(reservationCreationDataDto))
@@ -46,9 +47,9 @@ public class ReservationService {
     }
 
     private BigDecimal countTotalPrize(ReservationCreationDataDto dto) {
-        return AppFunctionalValues.ADULT_TICKET_PRICE.multiply(BigDecimal.valueOf(dto.amountOfAdultTickets()))
-                .add(AppFunctionalValues.STUDENT_TICKET_PRICE.multiply(BigDecimal.valueOf(dto.amountOfStudentTickets())))
-                .add(AppFunctionalValues.CHILD_TICKET_PRICE.multiply(BigDecimal.valueOf(dto.amountOfChildTickets())));
+        return TicketType.ADULT.getPrice().multiply(BigDecimal.valueOf(dto.numberOfAdultTickets()))
+                .add(TicketType.STUDENT.getPrice().multiply(BigDecimal.valueOf(dto.numberOfStudentTickets())))
+                .add(TicketType.CHILD.getPrice().multiply(BigDecimal.valueOf(dto.numberOfChildTickets())));
     }
 
     private void checkIfReservationDateTimeIsBeforeScreeningReservationSystemClosureDateTime(Screening screening) {
@@ -61,45 +62,99 @@ public class ReservationService {
 
     private void checkIfReservedSeatsAmountIsEqualToTicketsAmount(ReservationCreationDataDto reservationCreationDataDto) {
         int reservedSeatsAmount = reservationCreationDataDto.seatIds().size();
-        int ticketsAmount = reservationCreationDataDto.amountOfAdultTickets()
-                + reservationCreationDataDto.amountOfStudentTickets()
-                + reservationCreationDataDto.amountOfChildTickets();
+        int ticketsAmount = reservationCreationDataDto.numberOfAdultTickets()
+                + reservationCreationDataDto.numberOfStudentTickets()
+                + reservationCreationDataDto.numberOfChildTickets();
         if (reservedSeatsAmount != ticketsAmount) {
-            throw new ReservedSeatsAmountUnequalToTicketsAmountException(reservedSeatsAmount, ticketsAmount);
+            throw new ReservedSeatsNumberUnequalToTicketsNumberException(reservedSeatsAmount, ticketsAmount);
         }
     }
 
     private void checkIfChosenSeatsAreNotAlreadyReserved(Set<Seat> seats, Long screeningId) {
         for (Seat seat : seats) {
-            if(checkIfSeatIsReservedForParticularScreening(screeningId, seat)){
+            if (checkIfSeatIsReservedForParticularScreening(screeningId, seat)) {
                 throw new SeatAlreadyReservedException(seat.getSeatNumber(), seat.getId());
             }
         }
     }
 
-    private void checkIfUnreservedSingleSeatIsLeft(Set<Seat> seats, Long screeningId) {
+    private void checkIfUnreservedSingleSeatIsLeft(Set<Seat> chosenSeats, Long screeningId) {
         List<Seat> screeningRoomSeatList = seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(screeningId);
-        checkIfSingleUnreservedSeatIsLeftBetweenChosenSeats(seats,screeningRoomSeatList);
-        checkIfSingleUnreservedSeatIsLeftBetweenChosenAndAlreadyReservedSeat(seats,screeningRoomSeatList);
-        checkIfSingleUnreservedSeatIsLeftInTheEndOfTheRow(seats,screeningRoomSeatList);
+        List<Integer> distinctRowNumbersFromChosenSeats = getDistinctRowNumbersFromChosenSeats(chosenSeats);
 
+        for (Integer distinctRowNumber : distinctRowNumbersFromChosenSeats) {
+            List<Seat> rowOfSeatsSortedBySeatNumber = getRowOfSeatsSortedBySeatNumber(distinctRowNumber, screeningRoomSeatList);
+            if (rowOfSeatsSortedBySeatNumber.size() > 1) {
+                for (int i = 0; i < rowOfSeatsSortedBySeatNumber.size(); i++) {
+                    if (i == 0) {
+                        checkIfTheSeatAtTheBeginningOfTheRowIsLeftFreeAsSingle(chosenSeats,
+                                screeningId, rowOfSeatsSortedBySeatNumber, i);
+                    } else if (i == rowOfSeatsSortedBySeatNumber.size() - 1) {
+                        checkIfTheSeatAtTheEndOfTheRowIsLeftFreeAsSingle(chosenSeats, screeningId,
+                                rowOfSeatsSortedBySeatNumber, i, i - 1);
+                    } else {
+                        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i), chosenSeats)) {
+                            checkIfTheSeatBetweenTwoOthersIsLeftFreeAsSingle(chosenSeats, screeningId, rowOfSeatsSortedBySeatNumber, i);
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private void checkIfSingleUnreservedSeatIsLeftInTheEndOfTheRow(Set<Seat> chosenSeats, List<Seat> screeningRoomSeats) {
-
+    private void checkIfTheSeatBetweenTwoOthersIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
+                                                                  List<Seat> rowOfSeatsSortedBySeatNumber, int i) {
+        if (checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i - 1), chosenSeats) &&
+                checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i + 1), chosenSeats)) {
+            throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(i).getId(),
+                    rowOfSeatsSortedBySeatNumber.get(i).getSeatNumber());
+        }
     }
 
-    private void checkIfSingleUnreservedSeatIsLeftBetweenChosenSeats(Set<Seat> chosenSeats, List<Seat> screeningRoomSeats){
-
+    private void checkIfTheSeatAtTheEndOfTheRowIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
+                                                                  List<Seat> rowOfSeatsSortedBySeatNumber,
+                                                                  int currentSeatIndex, int previousSeatIndex) {
+        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(currentSeatIndex), chosenSeats)) {
+            if (checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(previousSeatIndex), chosenSeats)) {
+                throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(currentSeatIndex).getId(),
+                        rowOfSeatsSortedBySeatNumber.get(currentSeatIndex).getSeatNumber());
+            }
+        }
     }
 
-    private void checkIfSingleUnreservedSeatIsLeftBetweenChosenAndAlreadyReservedSeat(Set<Seat> chosenSeats, List<Seat> screeningRoomSeats){
+    private void checkIfTheSeatAtTheBeginningOfTheRowIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
+                                                                        List<Seat> rowOfSeatsSortedBySeatNumber,
+                                                                        int currentSeatIndex) {
+        checkIfTheSeatAtTheEndOfTheRowIsLeftFreeAsSingle(chosenSeats, screeningId, rowOfSeatsSortedBySeatNumber,
+                currentSeatIndex, currentSeatIndex + 1);
+    }
 
+    private boolean checkIfSeatIsPotentiallyReserved(Long screeningId, Seat checkedSeat, Set<Seat> chosenToReserveSeats) {
+        return checkIfSeatIsReservedForParticularScreening(screeningId, checkedSeat) ||
+                checkIfBeingCheckedSeatIsOneOfChosenToReserve(checkedSeat, chosenToReserveSeats);
     }
 
     private boolean checkIfSeatIsReservedForParticularScreening(Long screeningId, Seat seat) {
         return seat.getReservations().stream()
                 .map(reservation -> reservation.getScreening().getId())
                 .anyMatch(id -> id.equals(screeningId));
+    }
+
+    private boolean checkIfBeingCheckedSeatIsOneOfChosenToReserve(Seat beingCheckedSeat, Set<Seat> chosenToReserveSeats) {
+        return chosenToReserveSeats.contains(beingCheckedSeat);
+    }
+
+    private List<Integer> getDistinctRowNumbersFromChosenSeats(Set<Seat> chosenSeats) {
+        return chosenSeats.stream()
+                .map(Seat::getRowNumber)
+                .distinct()
+                .toList();
+    }
+
+    private List<Seat> getRowOfSeatsSortedBySeatNumber(int rowNumber, List<Seat> allSeats) {
+        return allSeats.stream()
+                .filter(seat -> seat.getRowNumber() == rowNumber)
+                .sorted(Comparator.comparing(Seat::getSeatNumber))
+                .toList();
     }
 }
