@@ -53,7 +53,7 @@ public class ReservationService {
     }
 
     private void checkIfReservationDateTimeIsBeforeScreeningReservationSystemClosureDateTime(Screening screening) {
-        if (LocalDateTime.now().isBefore(screening.getStartDateTime()
+        if (LocalDateTime.now().isAfter(screening.getStartDateTime()
                 .minusHours(AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getHour())
                 .minusMinutes(AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getMinute()))) {
             throw new ReservationSystemClosedException();

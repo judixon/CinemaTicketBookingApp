@@ -9,6 +9,6 @@ public class ReservationSystemClosedException extends RuntimeException {
                 DefaultExceptionMessages.RESERVATION_SYSTEM_CLOSED_EXCEPTION_MESSAGE,
                 AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getHour() != 0 ?
                         AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getHour() + " hours" : "",
-                AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getHour() + " minute"));
+                AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getMinute() + " minutes"));
     }
 }
