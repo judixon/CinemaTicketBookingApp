@@ -21,8 +21,10 @@ public class ScreeningController {
     private final ScreeningService screeningService;
 
     @GetMapping
-    ResponseEntity<List<ScreeningListDto>> getScreenings(@RequestParam @ApiParam(example = "2023-01-01T00:00:00") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fromDateTime,
-                                                         @RequestParam @ApiParam(example = "2023-10-01T00:00:00") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime toDateTime,
+    ResponseEntity<List<ScreeningListDto>> getScreenings(@RequestParam @ApiParam(example = "2023-01-01T00:00:00", value = "fromDateTime (yyyy-MM-dd'T'HH:mm:ss)")
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fromDateTime,
+                                                         @RequestParam @ApiParam(example = "2023-10-01T00:00:00",value = "toDateTime (yyyy-MM-dd'T'HH:mm:ss)")
+                                                         @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime toDateTime,
                                                          @RequestParam(defaultValue = "startDateTime") String firstSortParam,
                                                          @RequestParam(defaultValue = "movie.title") String secondSortParam,
                                                          @RequestParam(defaultValue = "ASC") Sort.Direction firstParamSortDirection,
