@@ -18,4 +18,3 @@ spring:
       ddl-auto: create-drop
     defer-datasource-initialization: true
     show-sql: true
-
