@@ -1,6 +1,5 @@
 package com.example.cinematicketbookingapp.service;
 
-import com.example.cinematicketbookingapp.config.AppFunctionalValues;
 import com.example.cinematicketbookingapp.dto.ReservationCreationDataDto;
 import com.example.cinematicketbookingapp.dto.ReservationSummaryDto;
 import com.example.cinematicketbookingapp.exceptions.ReservationSystemClosedException;
@@ -12,7 +11,6 @@ import com.example.cinematicketbookingapp.model.Reservation;
 import com.example.cinematicketbookingapp.model.Screening;
 import com.example.cinematicketbookingapp.model.Seat;
 import com.example.cinematicketbookingapp.repository.ReservationRepository;
-import com.example.cinematicketbookingapp.repository.ScreeningRepository;
 import com.example.cinematicketbookingapp.repository.SeatRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,7 +27,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class ReservationServiceTest {
@@ -119,7 +118,7 @@ class ReservationServiceTest {
 
     @Test
     void createReservation_shouldThrowSingleUnreservedSeatLeftException_whenSingleUnreservedSeatIsLeftAtTheBeginningOfTheRow() {
-       //given
+        //given
         ReservationCreationDataDto reservationCreationDataDto = ReservationCreationDataDto.builder()
                 .screeningId(1L)
                 .seatIds(Set.of())
@@ -157,10 +156,10 @@ class ReservationServiceTest {
         //when
         when(reservationDtoMapper.mapToReservation(any(ReservationCreationDataDto.class))).thenReturn(beingCreatedReservation);
         when(seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(anyLong()))
-                .thenReturn(List.of(seat1,seat2,seat3));
+                .thenReturn(List.of(seat1, seat2, seat3));
 
         //then
-        assertThrows(SingleUnreservedSeatLeftException.class, ()->reservationService.createReservation(reservationCreationDataDto));
+        assertThrows(SingleUnreservedSeatLeftException.class, () -> reservationService.createReservation(reservationCreationDataDto));
     }
 
     @Test
@@ -203,10 +202,10 @@ class ReservationServiceTest {
         //when
         when(reservationDtoMapper.mapToReservation(any(ReservationCreationDataDto.class))).thenReturn(beingCreatedReservation);
         when(seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(anyLong()))
-                .thenReturn(List.of(seat1,seat2,seat3));
+                .thenReturn(List.of(seat1, seat2, seat3));
 
         //then
-        assertThrows(SingleUnreservedSeatLeftException.class, ()->reservationService.createReservation(reservationCreationDataDto));
+        assertThrows(SingleUnreservedSeatLeftException.class, () -> reservationService.createReservation(reservationCreationDataDto));
     }
 
     @Test
@@ -249,14 +248,13 @@ class ReservationServiceTest {
         //when
         when(reservationDtoMapper.mapToReservation(any(ReservationCreationDataDto.class))).thenReturn(beingCreatedReservation);
         when(seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(anyLong()))
-                .thenReturn(List.of(seat1,seat2,seat3));
+                .thenReturn(List.of(seat1, seat2, seat3));
 
         //then
-        assertThrows(SingleUnreservedSeatLeftException.class, ()->reservationService.createReservation(reservationCreationDataDto));
+        assertThrows(SingleUnreservedSeatLeftException.class, () -> reservationService.createReservation(reservationCreationDataDto));
     }
 
     @Test
-
     void createReservation_shouldCorrectlyCountTotalPriceForTickets_whenChosenTicketsNumberIsEqualToNumberOfChosenSeats() {
         //given
         ReservationCreationDataDto reservationCreationDataDto = ReservationCreationDataDto.builder()
@@ -264,7 +262,7 @@ class ReservationServiceTest {
                 .numberOfStudentTickets(1)
                 .numberOfAdultTickets(1)
                 .numberOfChildTickets(1)
-                .seatIds(Set.of(1L,2L,3L))
+                .seatIds(Set.of(1L, 2L, 3L))
                 .build();
         Screening screening = Screening.builder()
                 .id(1L)
@@ -290,7 +288,7 @@ class ReservationServiceTest {
                 .build();
         Reservation beingCreatedReservation = Reservation.builder()
                 .screening(screening)
-                .seats(Set.of(seat1,seat2,seat3))
+                .seats(Set.of(seat1, seat2, seat3))
                 .build();
         BigDecimal expectedResult = BigDecimal.valueOf(55.5);
 
@@ -299,7 +297,7 @@ class ReservationServiceTest {
         when(reservationDtoMapper.mapToReservationSummaryDto(any())).thenReturn(ReservationSummaryDto.builder().build());
         when(reservationRepository.save(any(Reservation.class))).thenReturn(beingCreatedReservation);
         when(seatRepository.findAllSeatsOfScreeningRoomByScreeningIdOrderedByRowNumberAndSeatNumberAscending(anyLong()))
-                .thenReturn(List.of(seat1,seat2,seat3));
+                .thenReturn(List.of(seat1, seat2, seat3));
         BigDecimal realResult = reservationService.createReservation(reservationCreationDataDto).totalPrice();
 
         //then
