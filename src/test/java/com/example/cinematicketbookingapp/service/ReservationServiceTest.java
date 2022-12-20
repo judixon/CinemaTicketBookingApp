@@ -45,7 +45,6 @@ class ReservationServiceTest {
     @InjectMocks
     private ReservationService reservationService;
 
-
     @Test
     void createReservation_shouldThrowReservationSystemClosedException_whenReservationTimeIsAfterBorderTime() {
         //given

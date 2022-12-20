@@ -22,7 +22,7 @@ class TwoPartSurnameValidatorTest {
         //when
 
         //then
-        assertTrue(twoPartSurnameValidator.isValid("Aaa-Aaa", constraintValidatorContext));
+        assertTrue(twoPartSurnameValidator.isValid(ValidationTestConstantValues.CORRECT_TWO_PART_SURNAME, constraintValidatorContext));
     }
 
     @Test
@@ -32,11 +32,17 @@ class TwoPartSurnameValidatorTest {
         //when
 
         //then
-        assertTrue(twoPartSurnameValidator.isValid("Aaa", constraintValidatorContext));
+        assertTrue(twoPartSurnameValidator.isValid(ValidationTestConstantValues.CORRECT_ONE_PART_SURNAME, constraintValidatorContext));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"aa-Aaa", "Aa-Aaa", "aaa-Aaa", "Aaa-aa", "Aaa-Aa", "Aaa-aaa"})
+    @ValueSource(strings = {ValidationTestConstantValues.TOO_SHORT_FIRST_PART_OF_TWO_PART_SURNAME_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.FIRST_PART_OF_TWO_PART_SURNAME_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.TOO_SHORT_FIRST_PART_OF_TWO_PART_SURNAME,
+            ValidationTestConstantValues.SECOND_PART_OF_TWO_PART_SURNAME_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.TOO_SHORT_SECOND_PART_OF_TWO_PART_SURNAME_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.TOO_SHORT_SECOND_PART_OF_TWO_PART_SURNAME,
+            ValidationTestConstantValues.BOTH_PARTS_OF_TWO_PART_SURNAME_STARTS_WITH_LOWERCASE_LETTER_AND_ARE_TOO_SHORT})
     void isValid_returnsFalse_whenAtLeastOnePartOfTwoPartSurnameIsInvalid(String surname) {
         //given
 

@@ -26,9 +26,6 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @org.springframework.data.annotation.Version
-    private long version;
-
     @ManyToOne
     @JoinColumn(name = "screening_id")
     private Screening screening;

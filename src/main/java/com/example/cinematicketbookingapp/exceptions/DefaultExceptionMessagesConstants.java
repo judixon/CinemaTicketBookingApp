@@ -1,6 +1,10 @@
 package com.example.cinematicketbookingapp.exceptions;
 
-public abstract class DefaultExceptionMessages {
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class DefaultExceptionMessagesConstants {
     public static final String RESOURCE_NOT_FOUND_EXCEPTION_MESSAGE = "%s with ID: %s not found.";
 
     public static final String RESERVATION_SYSTEM_CLOSED_EXCEPTION_MESSAGE = "Creating reservation impossible, reservation system " +

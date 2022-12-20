@@ -6,6 +6,8 @@ import com.example.cinematicketbookingapp.dto.SeatListDto;
 import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
 import com.example.cinematicketbookingapp.mapper.ScreeningDtoMapper;
 import com.example.cinematicketbookingapp.mapper.SeatDtoMapper;
+import com.example.cinematicketbookingapp.model.Reservation;
+import com.example.cinematicketbookingapp.model.Screening;
 import com.example.cinematicketbookingapp.model.Seat;
 import com.example.cinematicketbookingapp.repository.ScreeningRepository;
 import com.example.cinematicketbookingapp.repository.SeatRepository;
@@ -73,7 +75,8 @@ public class ScreeningService {
 
     private String getSeatSignature(Seat seat, Long screeningId) {
         return seat.getReservations().stream()
-                .map(reservation -> reservation.getScreening().getId())
+                .map(Reservation::getScreening)
+                .map(Screening::getId)
                 .anyMatch(aLong -> aLong.equals(screeningId)) ?
                 String.format("%-5s", "(X)") :
                 String.format("%-5s", String.format("[%s]", seat.getSeatNumber()));

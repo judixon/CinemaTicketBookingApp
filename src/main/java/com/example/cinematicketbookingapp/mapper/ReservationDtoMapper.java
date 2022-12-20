@@ -1,6 +1,6 @@
 package com.example.cinematicketbookingapp.mapper;
 
-import com.example.cinematicketbookingapp.config.AppFunctionalValues;
+import com.example.cinematicketbookingapp.config.AppFunctionalValuesConstants;
 import com.example.cinematicketbookingapp.dto.ReservationCreationDataDto;
 import com.example.cinematicketbookingapp.dto.ReservationSummaryDto;
 import com.example.cinematicketbookingapp.exceptions.ResourceNotFoundException;
@@ -36,7 +36,7 @@ public class ReservationDtoMapper {
     public ReservationSummaryDto mapToReservationSummaryDto(Reservation reservation) {
         return ReservationSummaryDto.builder()
                 .reservationId(reservation.getId())
-                .expirationTime(reservation.getCreationDateTime().plus(AppFunctionalValues.RESERVATION_EXPIRATION_TIME))
+                .expirationTime(reservation.getCreationDateTime().plus(AppFunctionalValuesConstants.RESERVATION_EXPIRATION_TIME))
                 .build();
     }
 

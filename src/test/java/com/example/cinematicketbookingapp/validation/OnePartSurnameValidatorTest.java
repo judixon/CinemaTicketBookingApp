@@ -22,11 +22,13 @@ class OnePartSurnameValidatorTest {
         //when
 
         //then
-        assertTrue(onePartSurnameValidator.isValid("Aaa", constraintValidatorContext));
+        assertTrue(onePartSurnameValidator.isValid(ValidationTestConstantValues.CORRECT_ONE_PART_SURNAME, constraintValidatorContext));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"aa", "Aa", "aaa"})
+    @ValueSource(strings = {ValidationTestConstantValues.ONE_PART_SURNAME_TOO_SHORT_AND_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.ONE_PART_SURNAME_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.ONE_PART_SURNAME_TOO_SHORT})
     void isValid_returnsFalse_whenNameIsInvalid(String surname) {
         //given
 
@@ -43,6 +45,6 @@ class OnePartSurnameValidatorTest {
         //when
 
         //then
-        assertTrue(onePartSurnameValidator.isValid("A-", constraintValidatorContext));
+        assertTrue(onePartSurnameValidator.isValid(ValidationTestConstantValues.ANY_SURNAME_WITH_SINGLE_DASH, constraintValidatorContext));
     }
 }

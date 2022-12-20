@@ -33,7 +33,7 @@ class SeatRepositoryTest {
         }
 
         @Test
-        void shouldReturnListWithAllScreeningRoomSeatsForParticularScreeningSortedByRowNumberAscending(){
+        void shouldReturnListWithAllScreeningRoomSeatsForParticularScreeningSortedByRowNumberAscending() {
             //given
             Long screeningId = 1L;
 
@@ -46,7 +46,7 @@ class SeatRepositoryTest {
         }
 
         @Test
-        void shouldReturnListWithAllScreeningRoomSeatsForParticularScreeningSortedBySeatNumberAscending(){
+        void shouldReturnListWithAllScreeningRoomSeatsForParticularScreeningSortedBySeatNumberAscending() {
             //given
             Long screeningId = 3L;
 

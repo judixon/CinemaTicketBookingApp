@@ -12,6 +12,8 @@ import java.lang.annotation.Target;
 @Constraint(validatedBy = OnePartSurnameValidator.class)
 public @interface OnePartSurname {
     String message() default "String should start with capital letter.";
+
     Class<?>[] groups() default {};
+
     Class<? extends Payload>[] payload() default {};
 }

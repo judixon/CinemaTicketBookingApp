@@ -1,13 +1,13 @@
 package com.example.cinematicketbookingapp.model;
 
-import com.example.cinematicketbookingapp.config.AppFunctionalValues;
+import com.example.cinematicketbookingapp.config.AppFunctionalValuesConstants;
 
 import java.math.BigDecimal;
 
 public enum TicketType {
-    ADULT(AppFunctionalValues.ADULT_TICKET_PRICE),
-    STUDENT(AppFunctionalValues.STUDENT_TICKET_PRICE),
-    CHILD(AppFunctionalValues.CHILD_TICKET_PRICE);
+    ADULT(AppFunctionalValuesConstants.ADULT_TICKET_PRICE),
+    STUDENT(AppFunctionalValuesConstants.STUDENT_TICKET_PRICE),
+    CHILD(AppFunctionalValuesConstants.CHILD_TICKET_PRICE);
 
     BigDecimal price;
 

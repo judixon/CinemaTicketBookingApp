@@ -22,11 +22,13 @@ class NameValidatorTest {
         //when
 
         //then
-        assertTrue(nameValidator.isValid("Aaa", constraintValidatorContext));
+        assertTrue(nameValidator.isValid(ValidationTestConstantValues.CORRECT_NAME, constraintValidatorContext));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"aa", "Aa", "aaa"})
+    @ValueSource(strings = {ValidationTestConstantValues.NAME_TOO_SHORT,
+            ValidationTestConstantValues.NAME_STARTS_WITH_LOWERCASE_LETTER,
+            ValidationTestConstantValues.NAME_TOO_SHORT_AND_STARTS_WITH_LOWERCASE_LETTER})
     void isValid_returnsFalse_whenNameIsInvalid(String surname) {
         //given
 

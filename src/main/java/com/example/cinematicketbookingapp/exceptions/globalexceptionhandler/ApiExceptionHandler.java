@@ -19,32 +19,31 @@ public class ApiExceptionHandler {
     @ExceptionHandler(value = {ResourceNotFoundException.class})
     public ResponseEntity<Object> handleElementNotFoundException(ResourceNotFoundException e) {
         e.printStackTrace();
-        ApiExceptionData apiExceptionData = new ApiExceptionData(
-                e.getMessage(),
-                HttpStatus.NOT_FOUND,
-                ZonedDateTime.now()
-        );
+        ApiExceptionData  apiExceptionData = ApiExceptionData.builder()
+                .message(e.getMessage())
+                .responseHttpStatus(HttpStatus.NOT_FOUND)
+                .timestamp(ZonedDateTime.now())
+                .build();
         return new ResponseEntity<>(apiExceptionData, apiExceptionData.responseHttpStatus());
     }
 
     @ExceptionHandler(value = {ReservationSystemClosedException.class, ReservedSeatsNumberUnequalToTicketsNumberException.class,
             SeatAlreadyReservedException.class, SingleUnreservedSeatLeftException.class})
-    public ResponseEntity<Object> handleExceptionConnectedWithCreatingReservationProcess(ResourceNotFoundException e) {
+    public ResponseEntity<Object> handleExceptionConnectedWithCreatingReservationProcess(RuntimeException e) {
         e.printStackTrace();
-        ApiExceptionData apiExceptionData = new ApiExceptionData(
-                e.getMessage(),
-                HttpStatus.BAD_REQUEST,
-                ZonedDateTime.now()
-        );
+        ApiExceptionData  apiExceptionData = ApiExceptionData.builder()
+                .message(e.getMessage())
+                .responseHttpStatus(HttpStatus.BAD_REQUEST)
+                .timestamp(ZonedDateTime.now())
+                .build();
         return new ResponseEntity<>(apiExceptionData, apiExceptionData.responseHttpStatus());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public Map<String, String> handleValidationExceptions(
-            MethodArgumentNotValidException ex) {
+    public Map<String, String> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);

@@ -43,15 +43,15 @@ class ScreeningControllerIntegrationTest {
 
         assertThat(servletContext).isNotNull();
         assertTrue(servletContext instanceof MockServletContext);
-        assertThat(webApplicationContext.getBean("screeningController")).isNotNull();
+        assertThat(webApplicationContext.getBean(ControllerTestConstantValues.SCREENING_CONTROLLER_BEAN_NAME)).isNotNull();
     }
 
     @Test
     void getScreenings_shouldReturnStatus200AndAllScreenings_whenScreeningStartDateTimesAreInGivenTimePeriod() throws Exception {
         //given
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings")
-                .param("fromDateTime", "2023-01-01T00:00:00")
-                .param("toDateTime", "2023-10-01T00:00:00");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(ControllerTestConstantValues.SCREENINGS_PATH)
+                .param(ControllerTestConstantValues.FROM_DATE_TIME_PARAM, "2023-01-01T00:00:00")
+                .param(ControllerTestConstantValues.TO_DATE_TIME_PARAM, "2023-10-01T00:00:00");
 
         //when
         MvcResult result = mockMvc.perform(request)
@@ -61,16 +61,16 @@ class ScreeningControllerIntegrationTest {
         System.out.println(requestResult[1]);
 
         //then
-        assertThat(requestResult.length).isEqualTo(30);
+        assertThat(requestResult).hasSize(30);
         assertThat(requestResult).isSortedAccordingTo(Comparator.comparing(ScreeningListDto::screeningStartDateTime));
     }
 
     @Test
     void getScreenings_shouldReturnStatus200AndNoScreenings_whenScreeningStartDateTimesAreNotInGivenTimePeriod() throws Exception {
         //given
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings")
-                .param("fromDateTime", "2023-09-01T00:00:00")
-                .param("toDateTime", "2023-10-01T00:00:00");
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(ControllerTestConstantValues.SCREENINGS_PATH)
+                .param(ControllerTestConstantValues.FROM_DATE_TIME_PARAM, "2023-09-01T00:00:00")
+                .param(ControllerTestConstantValues.TO_DATE_TIME_PARAM, "2023-10-01T00:00:00");
 
         //when
         MvcResult result = mockMvc.perform(request)
@@ -86,7 +86,7 @@ class ScreeningControllerIntegrationTest {
     void getScreening_shouldReturnStatus200AndRequestedScreenings_whenScreeningWithParticularIdExistsInDatabase() throws Exception {
         //given
         long screeningId = 1L;
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings/" + screeningId);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(ControllerTestConstantValues.SCREENINGS_PATH + "/" + screeningId);
 
 
         //when
@@ -104,16 +104,15 @@ class ScreeningControllerIntegrationTest {
     void getScreening_shouldReturnStatus404AndProperExceptionMessage_whenScreeningWithRequestedIdDoesNotExistInDatabase() throws Exception {
         //given
         long screeningId = 100L;
-        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings/" + screeningId);
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get(ControllerTestConstantValues.SCREENINGS_PATH + "/" + screeningId);
 
         //when
         MvcResult result = mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is(404))
                 .andReturn();
         String handledExceptionMessage = Objects.requireNonNull(result.getResolvedException()).getMessage();
-        String expectedExceptionMessage = "Screening with ID: 100 not found.";
 
         //then
-        assertThat(handledExceptionMessage).isEqualTo(expectedExceptionMessage);
+        assertThat(handledExceptionMessage).isEqualTo(ControllerTestConstantValues.SCREENING_NOT_FOUND_EXCEPTION_MESSAGE);
     }
 }

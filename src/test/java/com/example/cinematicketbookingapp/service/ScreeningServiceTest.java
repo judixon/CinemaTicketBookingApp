@@ -57,7 +57,8 @@ class ScreeningServiceTest {
         when(screeningRepository.findAllByStartDateTimeAfterAndStartDateTimeBefore(any(), any(), any()))
                 .thenReturn(List.of(new Screening(), new Screening(), new Screening()));
         when(screeningDtoMapper.mapToScreeningListDto(any(Screening.class))).thenReturn(ScreeningListDto.builder().build());
-        List<ScreeningListDto> result = screeningService.getScreenings("a", "b", Sort.Direction.ASC, Sort.Direction.ASC,
+        List<ScreeningListDto> result = screeningService.getScreenings(ServiceTestConstantValues.ANY_STRING,
+                ServiceTestConstantValues.ANY_STRING, Sort.Direction.ASC, Sort.Direction.ASC,
                 LocalDateTime.now(), LocalDateTime.now());
 
         //then
@@ -192,9 +193,9 @@ class ScreeningServiceTest {
                     .reservations(Set.of(reservation1))
                     .build();
             List<Seat> seatRepositoryMethodResult = List.of(seat1, seat2, seat3, seat4);
-            String firstRowExpectation = "ROW(1):  [1]  [12] ";
-            String secondRowExpectation = "ROW(2):  [7]  ";
-            String thirdRowExpectation = "ROW(5):  (X)  ";
+            String firstRowExpectation = ServiceTestConstantValues.SEAT_SCHEMA_TEST_ROW_1;
+            String secondRowExpectation = ServiceTestConstantValues.SEAT_SCHEMA_TEST_ROW_2;
+            String thirdRowExpectation = ServiceTestConstantValues.SEAT_SCHEMA_TEST_ROW_5;
 
             //when
             when(screeningRepository.findById(anyLong())).thenReturn(Optional.of(new Screening()));
@@ -207,7 +208,7 @@ class ScreeningServiceTest {
             //then
             assertAll(
                     () -> assertThat(result.get(0)).isEqualTo(firstRowExpectation),
-                    () ->  assertThat(result.get(1)).isEqualTo(secondRowExpectation),
+                    () -> assertThat(result.get(1)).isEqualTo(secondRowExpectation),
                     () -> assertThat(result.get(2)).isEqualTo(thirdRowExpectation)
             );
         }

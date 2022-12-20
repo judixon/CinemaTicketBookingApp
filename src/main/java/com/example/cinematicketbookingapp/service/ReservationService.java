@@ -1,6 +1,6 @@
 package com.example.cinematicketbookingapp.service;
 
-import com.example.cinematicketbookingapp.config.AppFunctionalValues;
+import com.example.cinematicketbookingapp.config.AppFunctionalValuesConstants;
 import com.example.cinematicketbookingapp.dto.ReservationCreationDataDto;
 import com.example.cinematicketbookingapp.dto.ReservationSummaryDto;
 import com.example.cinematicketbookingapp.exceptions.ReservationSystemClosedException;
@@ -32,11 +32,9 @@ public class ReservationService {
     private final ReservationDtoMapper reservationDtoMapper;
     private final SeatRepository seatRepository;
 
-
     @Transactional
     public ReservationSummaryDto createReservation(ReservationCreationDataDto reservationCreationDataDto) {
         Reservation reservation = reservationDtoMapper.mapToReservation(reservationCreationDataDto);
-
 
         checkIfReservationDateTimeIsBeforeScreeningReservationSystemClosureDateTime(reservation.getScreening());
         checkIfReservedSeatsAmountIsEqualToTicketsAmount(reservationCreationDataDto);
@@ -56,8 +54,8 @@ public class ReservationService {
 
     private void checkIfReservationDateTimeIsBeforeScreeningReservationSystemClosureDateTime(Screening screening) {
         if (LocalDateTime.now().isAfter(screening.getStartDateTime()
-                .minusHours(AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getHour())
-                .minusMinutes(AppFunctionalValues.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getMinute()))) {
+                .minusHours(AppFunctionalValuesConstants.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getHour())
+                .minusMinutes(AppFunctionalValuesConstants.BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME.getMinute()))) {
             throw new ReservationSystemClosedException();
         }
     }
@@ -104,24 +102,21 @@ public class ReservationService {
 
     private void checkIfTheSeatBetweenTwoOthersIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
                                                                   List<Seat> rowOfSeatsSortedBySeatNumber, int i) {
-        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i), chosenSeats)) {
-            if (checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i - 1), chosenSeats) &&
-                    checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i + 1), chosenSeats)) {
-                throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(i).getId(),
-                        rowOfSeatsSortedBySeatNumber.get(i).getSeatNumber());
-            }
+        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i), chosenSeats) &&
+                checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i - 1), chosenSeats) &&
+                checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(i + 1), chosenSeats)) {
+            throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(i).getId(),
+                    rowOfSeatsSortedBySeatNumber.get(i).getSeatNumber());
         }
-
     }
 
     private void checkIfTheSeatAtTheEndOfTheRowIsLeftFreeAsSingle(Set<Seat> chosenSeats, Long screeningId,
                                                                   List<Seat> rowOfSeatsSortedBySeatNumber,
                                                                   int currentSeatIndex, int previousSeatIndex) {
-        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(currentSeatIndex), chosenSeats)) {
-            if (checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(previousSeatIndex), chosenSeats)) {
-                throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(currentSeatIndex).getId(),
-                        rowOfSeatsSortedBySeatNumber.get(currentSeatIndex).getSeatNumber());
-            }
+        if (!checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(currentSeatIndex), chosenSeats) &&
+                checkIfSeatIsPotentiallyReserved(screeningId, rowOfSeatsSortedBySeatNumber.get(previousSeatIndex), chosenSeats)) {
+            throw new SingleUnreservedSeatLeftException(rowOfSeatsSortedBySeatNumber.get(currentSeatIndex).getId(),
+                    rowOfSeatsSortedBySeatNumber.get(currentSeatIndex).getSeatNumber());
         }
     }
 
@@ -139,7 +134,8 @@ public class ReservationService {
 
     private boolean checkIfSeatIsReservedForParticularScreening(Long screeningId, Seat seat) {
         return seat.getReservations().stream()
-                .map(reservation -> reservation.getScreening().getId())
+                .map(Reservation::getScreening)
+                .map(Screening::getId)
                 .anyMatch(id -> id.equals(screeningId));
     }
 
