@@ -318,6 +318,8 @@ values (1, 1, 1),
        (10, 99, 3),
        (10, 100, 3);
 
+
+
 INSERT INTO screening (movie_id, screening_room_id, start_date_time, end_date_time)
 values (2, 1,'2023-01-28 12:00:00','2023-01-28 14:00:00'),
        (4, 1,'2023-01-28 14:15:00','2023-01-28 16:00:00'),

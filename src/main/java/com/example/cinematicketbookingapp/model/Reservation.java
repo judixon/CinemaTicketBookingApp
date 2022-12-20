@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OptimisticLock;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -25,11 +26,15 @@ public class Reservation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @org.springframework.data.annotation.Version
+    private long version;
+
     @ManyToOne
     @JoinColumn(name = "screening_id")
     private Screening screening;
 
     @ManyToMany
+    @OptimisticLock(excluded = false)
     @JoinTable(
             name = "seat_reservation",
             joinColumns = @JoinColumn(name = "reservation_id", referencedColumnName = "id"),

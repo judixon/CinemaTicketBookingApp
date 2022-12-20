@@ -15,9 +15,11 @@ import com.example.cinematicketbookingapp.model.TicketType;
 import com.example.cinematicketbookingapp.repository.ReservationRepository;
 import com.example.cinematicketbookingapp.repository.SeatRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.LockModeType;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -32,9 +34,12 @@ public class ReservationService {
     private final ReservationDtoMapper reservationDtoMapper;
     private final SeatRepository seatRepository;
 
+
     @Transactional
+    @Lock(LockModeType.OPTIMISTIC)
     public ReservationSummaryDto createReservation(ReservationCreationDataDto reservationCreationDataDto) {
         Reservation reservation = reservationDtoMapper.mapToReservation(reservationCreationDataDto);
+
 
         checkIfReservationDateTimeIsBeforeScreeningReservationSystemClosureDateTime(reservation.getScreening());
         checkIfReservedSeatsAmountIsEqualToTicketsAmount(reservationCreationDataDto);
