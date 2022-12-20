@@ -1,6 +1,7 @@
 package com.example.cinematicketbookingapp.controller;
 
-import com.example.cinematicketbookingapp.model.Screening;
+import com.example.cinematicketbookingapp.dto.ScreeningDetailsDto;
+import com.example.cinematicketbookingapp.dto.ScreeningListDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.ServletContext;
+import java.util.Comparator;
+import java.util.Objects;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -44,7 +47,7 @@ class ScreeningControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnSelectedScreenings() throws Exception {
+    void getScreenings_shouldReturnStatus200AndAllScreenings_whenScreeningStartDateTimesAreInGivenTimePeriod() throws Exception {
         //given
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings")
                 .param("fromDateTime", "2023-01-01T00:00:00")
@@ -54,9 +57,63 @@ class ScreeningControllerIntegrationTest {
         MvcResult result = mockMvc.perform(request)
                 .andExpect(MockMvcResultMatchers.status().is(200))
                 .andReturn();
-        Screening[] requestResult = objectMapper.readValue(result.getResponse().getContentAsString(), Screening[].class);
+        ScreeningListDto[] requestResult = objectMapper.readValue(result.getResponse().getContentAsString(), ScreeningListDto[].class);
+        System.out.println(requestResult[1]);
 
         //then
         assertThat(requestResult.length).isEqualTo(30);
+        assertThat(requestResult).isSortedAccordingTo(Comparator.comparing(ScreeningListDto::screeningStartDateTime));
+    }
+
+    @Test
+    void getScreenings_shouldReturnStatus200AndNoScreenings_whenScreeningStartDateTimesAreNotInGivenTimePeriod() throws Exception {
+        //given
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings")
+                .param("fromDateTime", "2023-09-01T00:00:00")
+                .param("toDateTime", "2023-10-01T00:00:00");
+
+        //when
+        MvcResult result = mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ScreeningListDto[] requestResult = objectMapper.readValue(result.getResponse().getContentAsString(), ScreeningListDto[].class);
+
+        //then
+        assertThat(requestResult.length).isEqualTo(0);
+    }
+
+    @Test
+    void getScreening_shouldReturnStatus200AndRequestedScreenings_whenScreeningWithParticularIdExistsInDatabase() throws Exception {
+        //given
+        long screeningId = 1L;
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings/" + screeningId);
+
+
+        //when
+        MvcResult result = mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().is(200))
+                .andReturn();
+        ScreeningDetailsDto requestResult = objectMapper.readValue(result.getResponse().getContentAsString(), ScreeningDetailsDto.class);
+
+        //then
+        assertThat(requestResult).isNotNull();
+        assertThat(requestResult.screeningId()).isEqualTo(1);
+    }
+
+    @Test
+    void getScreening_shouldReturnStatus204AndProperExceptionMessage_whenScreeningWithParticularIdDoesNotExistInDatabase() throws Exception {
+        //given
+        long screeningId = 100L;
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings/" + screeningId);
+
+        //when
+        MvcResult result = mockMvc.perform(request)
+                .andExpect(MockMvcResultMatchers.status().is(404))
+                .andReturn();
+        String handledExceptionMessage = Objects.requireNonNull(result.getResolvedException()).getMessage();
+        String expectedExceptionMessage = "Screening with ID: 100 not found.";
+
+        //then
+        assertThat(handledExceptionMessage).isEqualTo(expectedExceptionMessage);
     }
 }
