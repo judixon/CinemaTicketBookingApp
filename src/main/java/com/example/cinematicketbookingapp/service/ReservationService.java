@@ -36,7 +36,6 @@ public class ReservationService {
 
 
     @Transactional
-    @Lock(LockModeType.OPTIMISTIC)
     public ReservationSummaryDto createReservation(ReservationCreationDataDto reservationCreationDataDto) {
         Reservation reservation = reservationDtoMapper.mapToReservation(reservationCreationDataDto);
 
