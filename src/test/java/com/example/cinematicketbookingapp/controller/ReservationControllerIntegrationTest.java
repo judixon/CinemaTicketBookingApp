@@ -13,22 +13,22 @@ import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.persistence.OptimisticLockException;
 import javax.servlet.ServletContext;
-
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -57,17 +57,17 @@ class ReservationControllerIntegrationTest {
     }
 
     @Test
-    public void createReservation_shouldOccurOptimisticLock_whenAtLeastTwoThreadsWantToReserveAtLeastOneSameSeatAtTheSameTime() throws JsonProcessingException, InterruptedException {
+    void createReservation_shouldOccurOptimisticLock_whenAtLeastTwoThreadsWantToReserveAtLeastOneTheSameSeatAtTheSameTime() throws JsonProcessingException, InterruptedException {
         //given
         ReservationCreationDataDto reservationCreationDataDto1 = ReservationCreationDataDto.builder()
-                .seatIds(Set.of(1L,2L,3L))
+                .seatIds(Set.of(1L, 2L, 3L))
                 .screeningId(1L)
                 .numberOfAdultTickets(3)
                 .ownerName("Name")
                 .ownerSurname("Two-Part")
                 .build();
         ReservationCreationDataDto reservationCreationDataDto2 = ReservationCreationDataDto.builder()
-                .seatIds(Set.of(5L,6L,7L))
+                .seatIds(Set.of(5L, 6L, 7L))
                 .screeningId(1L)
                 .numberOfAdultTickets(3)
                 .ownerName("Name")
@@ -101,5 +101,35 @@ class ReservationControllerIntegrationTest {
 
         //then
         assertThat(result.size()).isEqualTo(2);
+    }
+
+    @Test
+    void createReservation_shouldReturn404StatusWithProperMessage_whenScreeningWithRequestedIdDoesNotExistInTheDatabase() throws JsonProcessingException {
+
+    }
+
+    @Test
+    void createReservation_shouldReturn404StatusWithProperMessage_whenSeatWithRequestedIdDoesNotExistInTheDatabase(){
+
+    }
+
+    @Test
+    void createReservation_shouldReturn400StatusWithProperMessage_whenAtLeastOneOfRequestedSeatsIsAlreadyReserved(){
+
+    }
+
+    @Test
+    void createReservation_shouldReturn400StatusWithProperMessage_whenTicketsNumberIsNotEqualToChosenSeatsNumber(){
+
+    }
+
+    @Test
+    void createReservation_shouldReturn400StatusWithProperMessage_whenAfterReservationThereWouldBeSingleUnreservedSeatLeft(){
+
+    }
+
+    @Test
+    void createReservation_shouldReturn201StatusWithProperResponseBody_whenRequestBodyDataIsValidAndCompliesWithRequirements(){
+
     }
 }

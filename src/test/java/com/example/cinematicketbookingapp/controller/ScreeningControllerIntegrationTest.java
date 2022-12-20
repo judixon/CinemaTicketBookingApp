@@ -101,7 +101,7 @@ class ScreeningControllerIntegrationTest {
     }
 
     @Test
-    void getScreening_shouldReturnStatus204AndProperExceptionMessage_whenScreeningWithParticularIdDoesNotExistInDatabase() throws Exception {
+    void getScreening_shouldReturnStatus404AndProperExceptionMessage_whenScreeningWithRequestedIdDoesNotExistInDatabase() throws Exception {
         //given
         long screeningId = 100L;
         MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/screenings/" + screeningId);
