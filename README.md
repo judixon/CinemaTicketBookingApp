@@ -63,3 +63,4 @@ http://localhost:8081/swagger-ui/index.html#/
   * A: I made unit tests only for methods with significant logic. Simple methods (e.g. methods that map from entities to dto and vice versa in DtoMappers classes) doesn't require unit tests. These simple methods have been tested during checking the whole flow in the integration tests. 
   
 **Feel free to ask me questions about the application, I will be happy to try to explain my view on my solution.**
+.
