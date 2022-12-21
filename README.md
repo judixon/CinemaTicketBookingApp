@@ -18,10 +18,10 @@
 ## Building and running the application
 #### Make sure that the system on which you want to run the application meets the following requirements:
 1. You must have JAVA 17 version in your system. If You don't have that one, You can install it from the following link:
-`https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html`
+`https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html`.
 2. Environmental variable JAVA_HOME must point to location of JDK with version > 17.
 3. You must have installed Apache Maven in your system. If You don't have that one, You can install it from the following link:
-`https://maven.apache.org/download.cgi`
+`https://maven.apache.org/download.cgi`.
 
 #### How to start the application?
 1. Go to `script` directory (path from main directory of the application: `./scripts`).
