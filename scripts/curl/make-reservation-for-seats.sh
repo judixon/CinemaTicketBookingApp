@@ -1,0 +1,1 @@
+curl -X POST "http://localhost:8081/reservations" -H  "accept: */*" -H  "Content-Type: application/json" -d "{  \"numberOfAdultTickets\": 1,  \"numberOfChildTickets\": 1,  \"numberOfStudentTickets\": 1,  \"ownerName\": \"CorrectName\",  \"ownerSurname\": \"Correct-Surname\",  \"screeningId\": 1,  \"seatIds\": [    1,2,3  ]}"

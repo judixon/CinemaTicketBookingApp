@@ -1,0 +1,17 @@
+package com.example.cinematicketbookingapp.config;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalTime;
+import java.time.Period;
+
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class AppFunctionalValuesConstants {
+    public static final Period RESERVATION_EXPIRATION_TIME = Period.ofDays(3);
+    public static final BigDecimal ADULT_TICKET_PRICE = BigDecimal.valueOf(25);
+    public static final BigDecimal STUDENT_TICKET_PRICE = BigDecimal.valueOf(18);
+    public static final BigDecimal CHILD_TICKET_PRICE = BigDecimal.valueOf(12.50);
+    public static final LocalTime BEFORE_SCREENING_RESERVATION_CREATING_BLOCKING_TIME = LocalTime.of(0, 15);
+}
