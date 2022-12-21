@@ -6,6 +6,8 @@
 * [Building and running the application](#building-and-running-the-application)
   * [System requirements](#make-sure-that-the-system-on-which-you-want-to-run-the-application-meets-the-following-requirements)
   * [How to start the application?](#how-to-start-the-application) 
+* [API test scripts](#api-test-scripts)
+* [API documentation](#api-documentation)
 * [Potential questions and answers](#potential-questions-and-answers)
 ## Additional assumptions
 * Reservation expiration time is equal to 3 days.
@@ -41,7 +43,7 @@ To run the business scenario test case You need to:
 3. Run test-business-scenario.sh script with the following command `./test-business-scenario.sh`.
 4. You can also run each business scenario used in complex script alone. But to be honest, testing this application is better with Swagger :)
 
-## Api documentation
+## API documentation
 
 Detailed API documentation is provided by Swagger. If You want to see it in a raw JSON version, just run the application and enter the link given below:
 ```
