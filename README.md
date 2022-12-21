@@ -4,7 +4,7 @@
 
 * [Additional assumptions](#additional-assumptions)
 * [Building and running the application](#building-and-running-the-application)
-  * [System requirements](#make-sure-that-the-system-on-which-you-want-to-run-the-application-meets-the-following-requirements:)
+  * [System requirements](#make-sure-that-the-system-on-which-you-want-to-run-the-application-meets-the-following-requirements)
   * [How to start the application?](#how-to-start-the-application) 
 * [Potential questions and answers](#potential-questions-and-answers)
 ## Additional assumptions
