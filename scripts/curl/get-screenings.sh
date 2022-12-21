@@ -1,0 +1,1 @@
+curl -X GET "http://localhost:8081/screenings?firstParamSortDirection=ASC&firstSortParam=startDateTime&fromDateTime=2023-01-01T00%3A00%3A00&secondParamSortDirection=ASC&secondSortParam=movie.title&toDateTime=2023-10-01T00%3A00%3A00" -H  "accept: */*"

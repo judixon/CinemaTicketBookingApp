@@ -30,6 +30,28 @@
 4. After build is done, You can run the application by running the run.sh script with the following command `./run.sh`.
 5. **You can also build and run application at one go by running the build-and-run.sh script with the following command `./build-and-run.sh`.
 6. You can shut down the application by running the shutdown.sh script with the following command `./shutdown.sh`.
+
+## API test scripts
+If You want to test the flow of business scenario You need to have cURL program installed. If you don't have that one, You can install it from the following link:
+`https://curl.se/download.html`.
+
+To run the business scenario test case You need to:
+1. Go to `curl` directory (path from main directory of the application: `./scripts/curl`).
+2. Open bash in the above directory.
+3. Run test-business-scenario.sh script with the following command `./test-business-scenario.sh`.
+4. You can also run each business scenario used in complex script alone. But to be honest, testing this application is better with Swagger :)
+
+## Api documentation
+
+Detailed API documentation is provided by Swagger. If You want to see it in a raw JSON version, just run the application and enter the link given below:
+```
+http://localhost:8081/v2/api-docs
+```
+You can also check it out in more visually pleasant version and play with that API in the link below:
+```
+http://localhost:8081/swagger-ui/index.html#/
+ ```
+
 ## Potential questions and answers
 * Q: Why optimistic lock is implemented in the Seat class?
   * A: When requesting "@GET /screening/{id}" You can see the list (and also the schema) of free seats for the particular screening. You can choose few of these free seats and manage to create reservation by requesting "@POST /reservations" with required data. In the vast majority of cases everything should be fine, but there is a corner case when two users (threads in application) want to make a reservation for at least one the same seat. In this situation when two transactions are opened in parallel and read the same record (seat in this case) they recognize it as free and after committing one of these transaction, the second transaction won't know that the data in database changed so the second transaction will be also committed and that will result in creating two reservations for the same seats for the same screening. If these transactions were opened sequentially, the program code would check if the seats chosen to reserve in the second transaction are not already reserved. Optimistic lock prevents write/update/delete operations to be executed in simultaneous opened transactions - in this case when two transaction want to update the record they read the record at the beginning, then they check the value of 'version' field and before committing they read the value of 'version' field again. If the value change, there is a rollback of transaction. The value of version field is changed after every transaction commit, so in this case only one of simultaneous transaction will make reservation for the seats - the other would be rollbacked because it would read different value of 'version' field before committing from the value read at the beginning. Optimistic lock is used in this case because in opposition to pessimistic lock, optimistic lock allows reading particular record(s) from database when there is any opened transaction which want to insert/update/delete any record protected with lock. So even if the user makes the reservations for particular seats, another user can read this data for example in purpose to check the schema of screening room seats. 

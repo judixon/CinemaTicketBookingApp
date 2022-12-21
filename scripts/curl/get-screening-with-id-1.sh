@@ -1,0 +1,1 @@
+curl -X GET "http://localhost:8081/screenings/1" -H  "accept: */*"
